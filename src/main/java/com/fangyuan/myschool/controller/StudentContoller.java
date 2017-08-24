@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +22,9 @@ import com.fangyuan.myschool.domain.Student;
 import com.fangyuan.myschool.repository.StudentRepository;
 
 @Controller
+@Slf4j
 @RequestMapping("/students")
 public class StudentContoller {
-
-	private static final Logger log = LoggerFactory.getLogger(StudentContoller.class);
-	
 	@Autowired
 	private StudentRepository studentRepository;
 	
