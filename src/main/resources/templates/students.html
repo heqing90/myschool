@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"></meta>
+<title>所有学生信息</title>
+<link rel="stylesheet" type="text/css" th:href="@{webjars/bootstrap/3.3.7/css/bootstrap.min.css}" />
+<script th:src="@{/webjars/jquery/1.11.1/jquery.min.js}"></script>
+<script th:src="@{webjars/bootstrap/3.3.7/js/bootstrap.min.js}"></script>
+<script src="js/bootstrap-confirmation.js"></script>	
+</head>
+<body>
+<div class="container">
+<h1>杰兴方园幼儿园</h1>
+<button id= "add" type="button" class="btn btn-success" onclick="addStudent()">新增学生</button>
+<div class="table-responsive">
+<table class="table table-striped table-hover table-bordered">
+	<tr>
+		<th>姓名</th>
+		<th>年龄</th>
+		<th>性别</th>
+		<th>父母</th>
+		<th></th>
+	</tr>
+	<tr>
+		<td><input type="text" class="form-control" id="name"></input></td>
+		<td><input type="text" class="form-control" id="age"></input></td>
+		<td><input type="text" class="form-control" id="sex"></input></td>
+		<td><input type="text" class="form-control" id="parent"></input></td>
+		<td><button type="button" class="btn btn-primary">查询</button></td>
+	</tr>
+	<tr th:each="student : ${students}">
+		<td th:text="${student.name}"></td>
+		<td th:text="${student.age}"></td>
+		<td th:text="${student.sex}"></td>
+		<td th:text="${student.parentName}"></td>
+		<td>
+			<div class="btn-group">
+  			<button type="button" class="btn btn-primary" th:onclick="'javascript:showStudent(' + ${student.id} + ')'">查看</button>
+  			<button type="button" class="btn btn-primary" th:onclick="'javascript:modifyStudent(' + ${student.id} + ')'">修改</button>
+  			<button type="button" class="btn btn-danger" data-toggle="confirmation" data-title="确认删除？" data-placement="left" data-btn-ok-label="确认" 
+  			data-btn-cancel-label="取消" th:id="${student.id}" data-on-confirm="deleteStudent">删除</button>
+			</div>
+		</td>
+	</tr>
+</table>
+</div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="studentModal" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="detailTitle">添加学生</h4>
+        </div>
+        <div class="modal-body">
+          <form class="form-horizontal">
+		  <div class="form-group">
+		    <label class="col-sm-2">姓名</label>
+		    <div class="col-sm-10">
+		    <input type="text" class="form-control" id="modalname"></input>
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label class="col-sm-2">年龄</label>
+		    <div class="col-sm-10">
+		    <input type="text" class="form-control" id="modalage"></input>
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label class="col-sm-2">出生日期</label>
+		    <div class="col-sm-10">
+		    <input type="text" class="form-control" id="modalbirthday"></input>
+		    </div>
+		  </div>
+
+		</form>
+        </div>
+        <div class="modal-footer">
+         	<button type="button" class="btn btn-primary" id="saveStudent">保存</button>
+          	<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
+</div>
+	
+<script>
+
+$('[data-toggle=confirmation]').confirmation({
+	  rootSelector: '[data-toggle=confirmation]',
+	  // other options
+	});
+	
+	
+function addStudent(){
+	console.log("add a student.")
+	$("#detailTitle").text("添加学生")
+	task = "add"
+	studentId = -1
+   	$("#studentModal").modal({
+        keyboard : true,
+        show : true,
+        backdrop : "static"
+    });
+}
+
+function showStudent(id){
+	console.log("show: "+ id)
+	studentId = id
+	var json = {
+		"id": id,
+	}
+	$.ajax({
+		url: "students/detail",
+		cache: false,
+		contentType: "application/json; charset=utf-8",
+		dataType: 'json',
+		data: JSON.stringify(json),
+		type: "post",
+	   	beforeSend: function () {
+            $(this).attr({ disabled: "disabled"});
+        },
+		success: function(result){
+			console.log("success: " + result.id)
+			$("#detailTitle").text("学生信息")
+			$("#modalname").val(result.name)
+			$("#modalage").val(result.age)		
+			$("#modalbirthday").val(result.birthday)
+	       	$("#studentModal").modal({
+                keyboard : false,
+                show : true,
+                backdrop : "static"
+            });
+		},
+		complete: function () {
+	    	$(this).removeAttr("disabled");
+	    	$('#detailTitle').text("添加学生")
+	  	},
+	  	error: function (data) {
+	    	console.log("error: " + data.responseText);
+	    }
+	})
+}
+
+function modifyStudent(id){
+	console.log("modify: "+ id)
+	studentId = id
+	var json = {
+		"id": id,
+	}
+	$.ajax({
+		url: "students/detail",
+		cache: false,
+		contentType: "application/json; charset=utf-8",
+		dataType: 'json',
+		data: JSON.stringify(json),
+		type: "post",
+	   	beforeSend: function () {
+            $(this).attr({ disabled: "disabled"});
+        },
+		success: function(result){
+			console.log("success: " + result.id)
+			task = "modify";
+			$("#detailTitle").text("修改学生信息")
+			$("#modalname").val(result.name)
+			$("#modalage").val(result.age)		
+			$("#modalbirthday").val(result.birthday)
+	       	$("#studentModal").modal({
+                keyboard : true,
+                show : true,
+                backdrop : "static"
+            });
+		},
+		complete: function () {
+	    	$(this).removeAttr("disabled");
+	    	$('#detailTitle').text("添加学生")
+	  	},
+	  	error: function (data) {
+	    	console.log("error: " + data.responseText);
+	    }
+	})
+}
+
+function deleteStudent(){
+	
+	var id = $(this)[0].getAttribute('id')
+	console.log("delete: "+ id)
+	studentId = id
+	var json = {
+		"id": id,
+	}
+	$.ajax({
+		url: "students/delete",
+		cache: false,
+		contentType: "application/json; charset=utf-8",
+		dataType: 'json',
+		data: JSON.stringify(json),
+		type: "post",
+	   	beforeSend: function () {
+            $(this).attr({ disabled: "disabled"});
+        },
+		success: function(result){
+			console.log("success: " + result)
+		},
+		complete: function () {
+	    	$(this).removeAttr("disabled");
+	    	location.reload();
+	  	},
+	  	error: function (data) {
+	    	console.log("error: " + data.responseText);
+	    }
+	})
+}
+
+$(document).ready(function(){
+	$("#saveStudent").click(function(){
+		console.log("save student info.")
+		var name = $("#modalname").val()
+		var age = $("#modalage").val()
+		var birthday = $("#modalbirthday").val()
+		var json =  {
+				"name": name,
+				"age": age,
+				"birthday": birthday,
+				"parentName": "test",
+				"phoneNumber": "test",
+			}
+		if (studentId != -1){
+			json['id'] = studentId
+		}
+		$.ajax({
+			url: "students/" + task,
+			cache: false,
+			contentType: "application/json; charset=utf-8",
+			dataType: 'json',
+			data: JSON.stringify(json),
+			type: "post",
+		   	beforeSend: function () {
+	            $('#saveStudent').attr({ disabled: "disabled"});
+	        },
+			success: function(result){
+				console.log("success: " + result)
+				$('#studentModal').modal('toggle');
+			},
+			complete: function () {
+		    	$('#saveStudent').removeAttr("disabled");
+		  	},
+		  	error: function (data) {
+		    	console.log("error: " + data.responseText);
+		    }
+		});
+	});
+	
+	$("#studentModal").on("hidden.bs.modal", function() {
+		console.log("clear data.")
+	   	$(':input', "div.form-group").each(function () {
+	        var type = this.type;
+	        var tag = this.tagName.toLowerCase(); // normalize case
+	        if (type == 'text' || type == 'password' || tag == 'textarea')
+	            this.value = "";
+	            // 多选checkboxes清空
+	            // select 下拉框清空
+	        else if (tag == 'select')
+	            this.selectedIndex = -1;
+	    });
+		location.reload();
+	});
+});
+
+</script>
+
+</body>
+</html>
