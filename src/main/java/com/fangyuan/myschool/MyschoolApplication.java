@@ -24,7 +24,7 @@ public class MyschoolApplication {
 		SpringApplication.run(MyschoolApplication.class, args);
 	}
 	
-	@Bean
+//	@Bean
 	public CommandLineRunner students(StudentRepository repository){
 		return (args)->{
 			log.info("create default students");

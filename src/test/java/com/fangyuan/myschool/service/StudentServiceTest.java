@@ -1,4 +1,4 @@
-package com.fangyuan.myschool;
+package com.fangyuan.myschool.service;
 
 import com.fangyuan.myschool.domain.Student;
 import com.fangyuan.myschool.repository.StudentRepository;
@@ -9,20 +9,18 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.web.context.WebApplicationContext;
 
 import javax.annotation.Resource;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
-public class MyschoolApplicationTests {
+public class StudentServiceTest {
+
+    @Resource
+    private StudentService studentService;
 
     @Resource
     private StudentRepository studentRepository;
-
-    @Resource
-    private WebApplicationContext context;
-
 
     @Before
     public void setup() {
@@ -37,8 +35,8 @@ public class MyschoolApplicationTests {
     }
 
     @Test
-    public void contextLoads() {
-        Assert.assertNotNull(studentRepository.findByName("张三test"));
-        Assert.assertEquals(studentRepository.findByName("张三test1").size(), 0);
+    public void testFindByName() {
+        Assert.assertEquals(studentService.findByName("张三test").size(), 1);
     }
 }
+
