@@ -59,7 +59,7 @@
 		<td><input type="text" class="form-control" id="search_phone"></input></td>
 		<td><input type="text" class="form-control" id="search_address"></input></td>
 		<td><input type="text" class="form-control" id="search_parent"></input></td>
-		<td><button type="button" class="btn btn-primary" onclick="searchStudent">查询</button></td>
+		<td><button type="button" class="btn btn-primary" onclick="searchStudent()">查询</button></td>
 	</tr>
 	<tr th:each="student : ${students}">
 		<td th:text="${student.name}"></td>
@@ -171,50 +171,6 @@ function validCheckStudent(name, age, sex, birthday, parent, phone, address) {
 	return true	
 }
 
-
-function searchStudent() {
-	console.log("search student.")
-	var name = $("#search_name").val()
-	var age = $("#search_age").val()
-	var sex = $("#search_sex").val()
-	var birthday = $("#search_birthday").val()
-	var parent = $("#search_parent").val()
-	var phone = $("#search_phone").val()
-	var address = $("#search_address").val()
-	if (validCheckStudent(name, age, sex, birthday, parent, phone, address)) {
-		var json =  {
-			"name": name,
-			"age": age,
-			"sex": sex,
-			"birthday": birthday,
-			"parentName":  parent,
-			"phoneNumber": phone,
-			"address": address,
-		}
-		$.ajax({
-			url: "students/search",
-			cache: false,
-			contentType: "application/json; charset=utf-8",
-			dataType: 'json',
-			data: JSON.stringify(json),
-			type: "post",
-		   	beforeSend: function () {
-	            $(this).attr({ disabled: "disabled"});
-	        },
-			success: function(result){
-				console.log("success: " + result)
-			},
-			complete: function () {
-				$(this).removeAttr("disabled");
-		  	},
-		  	error: function (data) {
-		    	console.log("error: " + data.responseText);
-		    }
-		});
-	} else {
-		console.log('invalid input.')
-	}
-}
 
 function addStudent(){
 	console.log("add a student.")
@@ -328,7 +284,24 @@ function deleteStudent(){
 }
 
 function searchStudent() {
-	console.log("search student by conditions.")
+	var name = $("#search_name").val()
+	var age = $("#search_age").val()
+	var sex = $("#search_sex").val()
+	var birthday = $("#search_birthday").val()
+	var parent = $("#search_parent").val()
+	var phone = $("#search_phone").val()
+	var address = $("#search_address").val()
+	
+	if (validCheckStudent(name, age, sex, birthday, parent, phone, address)) {
+		console.log("search student:" + name)
+		/*<![CDATA[*/
+		url = "students?name=" + name + "&pageNum=0&pageSize=" + 1
+		/*]]>*/
+		location.href = url
+		
+	} else {
+		console.log('invalid input.')
+	}
 }
 
 $(document).ready(function(){

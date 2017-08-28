@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Date;
 
+import org.aspectj.weaver.loadtime.Agent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -38,13 +39,19 @@ public class StudentContoller {
 			@RequestParam(required = false) String phoneNumber,
 			@RequestParam(required = false) String address,
 			@RequestParam(required = false) String parentName,
-			@RequestParam(defaultValue = "1") Integer pageNum, 
+			@RequestParam(defaultValue = "0") Integer pageNum, 
 			@RequestParam(defaultValue = "${student.page.size}") Integer pageSize) {
 		int page = pageNum;
 		int size = pageSize;
-
+		
+		Page<Student> students;
 		Pageable pageable = (Pageable) new PageRequest(page, size);
-		Page<Student> students = studentRepository.findAll(pageable);
+		if (name == null && sex == null && age == null) {
+			students = studentRepository.findAll(pageable);
+		} else {
+			log.info("get students: " + name);
+			students = studentRepository.findByText(name, pageable);
+		}
 		map.addAttribute("students", students.getContent());
 		int[] pages = MyUtil.range(0, students.getTotalPages(), 1); 
 		map.addAttribute("pages", pages);
