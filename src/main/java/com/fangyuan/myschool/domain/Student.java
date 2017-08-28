@@ -33,7 +33,6 @@ public class Student implements Serializable{
 	private String name;
 	
 	@Column(nullable = false)
-    @NonNull
 	private int age;
 
     @NonNull
@@ -54,6 +53,31 @@ public class Student implements Serializable{
 	@Column
 	private String address;
 
+	public Student() {
+		
+	}
+	
+	public Student(Long id) {
+		this.id = id;
+		this.name = "";
+		this.age = 0;
+		this.birthday = new Date();
+		this.sex = "";
+		this.parentName = "";
+		this.phoneNumber = "";
+		this.address = "";
+	}
+	
+	public Student(String name, int age, String sex, Date birthday, String phoneNumber, String address, String parentName) {
+		this.name = name;
+		this.age = age;
+		this.birthday = birthday;
+		this.sex = sex;
+		this.parentName = parentName;
+		this.phoneNumber = phoneNumber;
+		this.address = address;
+	}
+	
 	public Student update(Student student) {
 		this.name = student.name;
 		this.age = student.age;
@@ -64,5 +88,4 @@ public class Student implements Serializable{
 		this.address = student.address;
 		return this;
 	}
-	
 }

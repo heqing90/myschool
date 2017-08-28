@@ -3,6 +3,7 @@ package com.fangyuan.myschool.controller;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.persistence.Id;
 
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -19,7 +20,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fangyuan.myschool.domain.Student;
+import com.fangyuan.myschool.domain.StudentId;
 import com.fangyuan.myschool.repository.StudentRepository;
+
 
 @Controller
 @Slf4j
@@ -43,7 +46,7 @@ public class StudentContoller {
 	}
 	
 	@RequestMapping(value = "/detail", method = RequestMethod.POST)
-	public @ResponseBody Student showStudent(@RequestBody Student student){
+	public @ResponseBody Student showStudent(@RequestBody StudentId student){
 		log.info("show a student: " + student.getId());
 		Student ret = studentRepository.findById(student.getId());
 		return ret;
@@ -60,7 +63,7 @@ public class StudentContoller {
 	
 	
 	@RequestMapping(value = "/delete", method = RequestMethod.POST)
-	public @ResponseBody int deleteStudent(@RequestBody Student student){
+	public @ResponseBody int deleteStudent(@RequestBody StudentId student){
 		log.info("delete a student: " + student.getId());
 		studentRepository.deleteById(student.getId());
 		return 0;

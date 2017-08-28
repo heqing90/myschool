@@ -14,24 +14,46 @@
 <button id= "add" type="button" class="btn btn-success" onclick="addStudent()">新增学生</button>
 <div class="table-responsive">
 <table class="table table-striped table-hover table-bordered">
+	<colgroup>
+	<col style="width: 10%;"></col>
+	<col style="width: 5%;"></col>
+	<col style="width: 5%;"></col>
+	<col></col>
+	<col></col>
+	<col></col>
+	<col style="width: 10%;"></col>
+	<col style="width: 20%;"></col>
+	</colgroup>
+	<thead>
 	<tr>
 		<th>姓名</th>
-		<th>年龄</th>
 		<th>性别</th>
+		<th>年龄</th>
+		<th>出生日期</th>
+		<th>联系电话</th>
+		<th>联系地址</th>
 		<th>父母</th>
 		<th></th>
 	</tr>
+	</thead>
+	<tbody>
 	<tr>
-		<td><input type="text" class="form-control" id="name"></input></td>
-		<td><input type="text" class="form-control" id="age"></input></td>
-		<td><input type="text" class="form-control" id="sex"></input></td>
-		<td><input type="text" class="form-control" id="parent"></input></td>
-		<td><button type="button" class="btn btn-primary">查询</button></td>
+		<td><input type="text" class="form-control" id="search_name"></input></td>
+		<td><input type="text" class="form-control" id="search_sex"></input></td>
+		<td><input type="text" class="form-control" id="search_age"></input></td>
+		<td><input type="text" class="form-control" id="search_birthday"></input></td>
+		<td><input type="text" class="form-control" id="search_phone"></input></td>
+		<td><input type="text" class="form-control" id="search_address"></input></td>
+		<td><input type="text" class="form-control" id="search_parent"></input></td>
+		<td><button type="button" class="btn btn-primary" onclick="searchStudent">查询</button></td>
 	</tr>
 	<tr th:each="student : ${students}">
 		<td th:text="${student.name}"></td>
-		<td th:text="${student.age}"></td>
 		<td th:text="${student.sex}"></td>
+		<td th:text="${student.age}"></td>
+		<td th:text="${student.birthday}"></td>
+		<td th:text="${student.phoneNumber}"></td>
+		<td th:text="${student.address}"></td>
 		<td th:text="${student.parentName}"></td>
 		<td>
 			<div class="btn-group">
@@ -42,6 +64,8 @@
 			</div>
 		</td>
 	</tr>
+	</tbody>
+	
 </table>
 </div>
 
@@ -64,6 +88,12 @@
 		    </div>
 		  </div>
 		  <div class="form-group">
+		    <label class="col-sm-2">性别</label>
+		    <div class="col-sm-10">
+		    <input type="text" class="form-control" id="modalsex"></input>
+		    </div>
+		  </div>
+		  <div class="form-group">
 		    <label class="col-sm-2">年龄</label>
 		    <div class="col-sm-10">
 		    <input type="text" class="form-control" id="modalage"></input>
@@ -75,7 +105,24 @@
 		    <input type="text" class="form-control" id="modalbirthday"></input>
 		    </div>
 		  </div>
-
+		  <div class="form-group">
+		    <label class="col-sm-2">联系电话</label>
+		    <div class="col-sm-10">
+		    <input type="text" class="form-control" id="modalphone"></input>
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label class="col-sm-2">联系地址</label>
+		    <div class="col-sm-10">
+		    <input type="text" class="form-control" id="modaladdress"></input>
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label class="col-sm-2">父母</label>
+		    <div class="col-sm-10">
+		    <input type="text" class="form-control" id="modalparent"></input>
+		    </div>
+		  </div>
 		</form>
         </div>
         <div class="modal-footer">
@@ -95,8 +142,9 @@ $('[data-toggle=confirmation]').confirmation({
 	  rootSelector: '[data-toggle=confirmation]',
 	  // other options
 	});
-	
-	
+
+//$("td,th").addClass("text-center");  
+
 function addStudent(){
 	console.log("add a student.")
 	$("#detailTitle").text("添加学生")
@@ -124,22 +172,28 @@ function showStudent(id){
 		type: "post",
 	   	beforeSend: function () {
             $(this).attr({ disabled: "disabled"});
+            console.log(JSON.stringify(json))
         },
 		success: function(result){
 			console.log("success: " + result.id)
-			$("#detailTitle").text("学生信息")
+			$("#saveStudent").hide()
+			$('#detailTitle').text("学生信息")
+			
 			$("#modalname").val(result.name)
 			$("#modalage").val(result.age)		
 			$("#modalbirthday").val(result.birthday)
+			$("#modalsex").val(result.sex)
+			$("#modalparent").val(result.parentName)
+			$("#modalphone").val(result.phoneNumber)
+			$("#modaladdress").val(result.address)
 	       	$("#studentModal").modal({
-                keyboard : false,
+                keyboard : true,
                 show : true,
                 backdrop : "static"
             });
 		},
 		complete: function () {
 	    	$(this).removeAttr("disabled");
-	    	$('#detailTitle').text("添加学生")
 	  	},
 	  	error: function (data) {
 	    	console.log("error: " + data.responseText);
@@ -170,6 +224,10 @@ function modifyStudent(id){
 			$("#modalname").val(result.name)
 			$("#modalage").val(result.age)		
 			$("#modalbirthday").val(result.birthday)
+			$("#modalsex").val(result.sex)
+			$("#modalparent").val(result.parentName)
+			$("#modalphone").val(result.phoneNumber)
+			$("#modaladdress").val(result.address)
 	       	$("#studentModal").modal({
                 keyboard : true,
                 show : true,
@@ -178,7 +236,6 @@ function modifyStudent(id){
 		},
 		complete: function () {
 	    	$(this).removeAttr("disabled");
-	    	$('#detailTitle').text("添加学生")
 	  	},
 	  	error: function (data) {
 	    	console.log("error: " + data.responseText);
@@ -217,18 +274,28 @@ function deleteStudent(){
 	})
 }
 
+function searchStudent() {
+	console.log("search student by conditions.")
+}
+
 $(document).ready(function(){
 	$("#saveStudent").click(function(){
 		console.log("save student info.")
 		var name = $("#modalname").val()
 		var age = $("#modalage").val()
+		var sex = $("#modalsex").val()
 		var birthday = $("#modalbirthday").val()
+		var parent = $("#modalparent").val()
+		var phoneNumber = $("#modalphone").val()
+		var address = $("#modaladdress").val()
 		var json =  {
 				"name": name,
 				"age": age,
+				"sex": sex,
 				"birthday": birthday,
-				"parentName": "test",
-				"phoneNumber": "test",
+				"parentName":  parent,
+				"phoneNumber": phoneNumber,
+				"address": address,
 			}
 		if (studentId != -1){
 			json['id'] = studentId
@@ -268,6 +335,7 @@ $(document).ready(function(){
 	        else if (tag == 'select')
 	            this.selectedIndex = -1;
 	    });
+		$("#saveStudent").hide()
 		location.reload();
 	});
 });
