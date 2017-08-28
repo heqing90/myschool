@@ -11,7 +11,21 @@
 <body>
 <div class="container">
 <h1>杰兴方园幼儿园</h1>
-<button id= "add" type="button" class="btn btn-success" onclick="addStudent()">新增学生</button>
+<div>
+	<div>
+		<button id= "add" type="button" class="btn btn-success" onclick="addStudent()">新增学生</button>
+	</div>
+	<div class="dropdown">
+		<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">每页显示条数<span class="caret"></span></button>
+	  	<ul class="dropdown-menu">
+	    	<li><a th:href="@{${'/students'}(pageNum=${pageNum}, pageSize=1)}">1</a></li>
+	    	<li><a th:href="@{${'/students'}(pageNum=${pageNum}, pageSize=10)}">10</a></li>
+	    	<li><a th:href="@{${'/students'}(pageNum=${pageNum}, pageSize=50)}">50</a></li>
+	    	<li><a th:href="@{${'/students'}(pageNum=${pageNum}, pageSize=100)}">100</a></li>
+	  </ul>
+	</div>
+</div>
+
 <div class="table-responsive">
 <table class="table table-striped table-hover table-bordered">
 	<colgroup>
@@ -68,6 +82,13 @@
 	
 </table>
 </div>
+<div>
+ 	<ul class="pagination">
+  		<li th:each="page: ${pages}" th:class="${page} == ${pageNum} ? 'active': ''">
+  			<a th:href="@{${'/students'}(pageNum=${page}, pageSize=${pageSize})}" th:text="${page} + 1"></a>
+  		</li>
+	</ul>
+</div>
 
   <!-- Modal -->
   <div class="modal fade" id="studentModal" role="dialog">
@@ -84,43 +105,43 @@
 		  <div class="form-group">
 		    <label class="col-sm-2">姓名</label>
 		    <div class="col-sm-10">
-		    <input type="text" class="form-control" id="modalname"></input>
+		    <input type="text" class="form-control" id="modal_name"></input>
 		    </div>
 		  </div>
 		  <div class="form-group">
 		    <label class="col-sm-2">性别</label>
 		    <div class="col-sm-10">
-		    <input type="text" class="form-control" id="modalsex"></input>
+		    <input type="text" class="form-control" id="modal_sex"></input>
 		    </div>
 		  </div>
 		  <div class="form-group">
 		    <label class="col-sm-2">年龄</label>
 		    <div class="col-sm-10">
-		    <input type="text" class="form-control" id="modalage"></input>
+		    <input type="text" class="form-control" id="modal_age"></input>
 		    </div>
 		  </div>
 		  <div class="form-group">
 		    <label class="col-sm-2">出生日期</label>
 		    <div class="col-sm-10">
-		    <input type="text" class="form-control" id="modalbirthday"></input>
+		    <input type="text" class="form-control" id="modal_birthday"></input>
 		    </div>
 		  </div>
 		  <div class="form-group">
 		    <label class="col-sm-2">联系电话</label>
 		    <div class="col-sm-10">
-		    <input type="text" class="form-control" id="modalphone"></input>
+		    <input type="text" class="form-control" id="modal_phone"></input>
 		    </div>
 		  </div>
 		  <div class="form-group">
 		    <label class="col-sm-2">联系地址</label>
 		    <div class="col-sm-10">
-		    <input type="text" class="form-control" id="modaladdress"></input>
+		    <input type="text" class="form-control" id="modal_address"></input>
 		    </div>
 		  </div>
 		  <div class="form-group">
 		    <label class="col-sm-2">父母</label>
 		    <div class="col-sm-10">
-		    <input type="text" class="form-control" id="modalparent"></input>
+		    <input type="text" class="form-control" id="modal_parent"></input>
 		    </div>
 		  </div>
 		</form>
@@ -145,6 +166,56 @@ $('[data-toggle=confirmation]').confirmation({
 
 //$("td,th").addClass("text-center");  
 
+
+function validCheckStudent(name, age, sex, birthday, parent, phone, address) {
+	return true	
+}
+
+
+function searchStudent() {
+	console.log("search student.")
+	var name = $("#search_name").val()
+	var age = $("#search_age").val()
+	var sex = $("#search_sex").val()
+	var birthday = $("#search_birthday").val()
+	var parent = $("#search_parent").val()
+	var phone = $("#search_phone").val()
+	var address = $("#search_address").val()
+	if (validCheckStudent(name, age, sex, birthday, parent, phone, address)) {
+		var json =  {
+			"name": name,
+			"age": age,
+			"sex": sex,
+			"birthday": birthday,
+			"parentName":  parent,
+			"phoneNumber": phone,
+			"address": address,
+		}
+		$.ajax({
+			url: "students/search" + ,
+			cache: false,
+			contentType: "application/json; charset=utf-8",
+			dataType: 'json',
+			data: JSON.stringify(json),
+			type: "post",
+		   	beforeSend: function () {
+	            $(this).attr({ disabled: "disabled"});
+	        },
+			success: function(result){
+				console.log("success: " + result)
+			},
+			complete: function () {
+				$(this).removeAttr("disabled");
+		  	},
+		  	error: function (data) {
+		    	console.log("error: " + data.responseText);
+		    }
+		});
+	} else {
+		console.log('invalid input.')
+	}
+}
+
 function addStudent(){
 	console.log("add a student.")
 	$("#detailTitle").text("添加学生")
@@ -160,32 +231,26 @@ function addStudent(){
 function showStudent(id){
 	console.log("show: "+ id)
 	studentId = id
-	var json = {
-		"id": id,
-	}
+	
 	$.ajax({
-		url: "students/detail",
+		url: "students/detail?id=" + id ,
 		cache: false,
-		contentType: "application/json; charset=utf-8",
-		dataType: 'json',
-		data: JSON.stringify(json),
-		type: "post",
+		type: "get",
 	   	beforeSend: function () {
             $(this).attr({ disabled: "disabled"});
-            console.log(JSON.stringify(json))
         },
 		success: function(result){
 			console.log("success: " + result.id)
 			$("#saveStudent").hide()
 			$('#detailTitle').text("学生信息")
 			
-			$("#modalname").val(result.name)
-			$("#modalage").val(result.age)		
-			$("#modalbirthday").val(result.birthday)
-			$("#modalsex").val(result.sex)
-			$("#modalparent").val(result.parentName)
-			$("#modalphone").val(result.phoneNumber)
-			$("#modaladdress").val(result.address)
+			$("#modal_name").val(result.name)
+			$("#modal_age").val(result.age)		
+			$("#modal_birthday").val(result.birthday)
+			$("#modal_sex").val(result.sex)
+			$("#modal_parent").val(result.parentName)
+			$("#modal_phone").val(result.phoneNumber)
+			$("#modal_address").val(result.address)
 	       	$("#studentModal").modal({
                 keyboard : true,
                 show : true,
@@ -204,16 +269,10 @@ function showStudent(id){
 function modifyStudent(id){
 	console.log("modify: "+ id)
 	studentId = id
-	var json = {
-		"id": id,
-	}
 	$.ajax({
-		url: "students/detail",
+		url: "students/detail?id=" + id ,
 		cache: false,
-		contentType: "application/json; charset=utf-8",
-		dataType: 'json',
-		data: JSON.stringify(json),
-		type: "post",
+		type: "get",
 	   	beforeSend: function () {
             $(this).attr({ disabled: "disabled"});
         },
@@ -221,13 +280,13 @@ function modifyStudent(id){
 			console.log("success: " + result.id)
 			task = "modify";
 			$("#detailTitle").text("修改学生信息")
-			$("#modalname").val(result.name)
-			$("#modalage").val(result.age)		
-			$("#modalbirthday").val(result.birthday)
-			$("#modalsex").val(result.sex)
-			$("#modalparent").val(result.parentName)
-			$("#modalphone").val(result.phoneNumber)
-			$("#modaladdress").val(result.address)
+			$("#modal_name").val(result.name)
+			$("#modal_age").val(result.age)		
+			$("#modal_birthday").val(result.birthday)
+			$("#modal_sex").val(result.sex)
+			$("#modal_parent").val(result.parentName)
+			$("#modal_phone").val(result.phoneNumber)
+			$("#modal_address").val(result.address)
 	       	$("#studentModal").modal({
                 keyboard : true,
                 show : true,
@@ -248,16 +307,10 @@ function deleteStudent(){
 	var id = $(this)[0].getAttribute('id')
 	console.log("delete: "+ id)
 	studentId = id
-	var json = {
-		"id": id,
-	}
 	$.ajax({
-		url: "students/delete",
+		url: "students/delete?id=" + id,
 		cache: false,
-		contentType: "application/json; charset=utf-8",
-		dataType: 'json',
-		data: JSON.stringify(json),
-		type: "post",
+		type: "get",
 	   	beforeSend: function () {
             $(this).attr({ disabled: "disabled"});
         },
@@ -281,20 +334,20 @@ function searchStudent() {
 $(document).ready(function(){
 	$("#saveStudent").click(function(){
 		console.log("save student info.")
-		var name = $("#modalname").val()
-		var age = $("#modalage").val()
-		var sex = $("#modalsex").val()
-		var birthday = $("#modalbirthday").val()
-		var parent = $("#modalparent").val()
-		var phoneNumber = $("#modalphone").val()
-		var address = $("#modaladdress").val()
+		var name = $("#modal_name").val()
+		var age = $("#modal_age").val()
+		var sex = $("#modal_sex").val()
+		var birthday = $("#modal_birthday").val()
+		var parent = $("#modal_parent").val()
+		var phone = $("#modal_phone").val()
+		var address = $("#modal_address").val()
 		var json =  {
 				"name": name,
 				"age": age,
 				"sex": sex,
 				"birthday": birthday,
 				"parentName":  parent,
-				"phoneNumber": phoneNumber,
+				"phoneNumber": phone,
 				"address": address,
 			}
 		if (studentId != -1){
