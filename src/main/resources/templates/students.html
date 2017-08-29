@@ -18,10 +18,10 @@
 	<div class="dropdown">
 		<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">每页显示条数<span class="caret"></span></button>
 	  	<ul class="dropdown-menu">
-	    	<li><a th:href="@{${'/students'}(pageNum=${pageNum}, pageSize=1)}">1</a></li>
-	    	<li><a th:href="@{${'/students'}(pageNum=${pageNum}, pageSize=10)}">10</a></li>
-	    	<li><a th:href="@{${'/students'}(pageNum=${pageNum}, pageSize=50)}">50</a></li>
-	    	<li><a th:href="@{${'/students'}(pageNum=${pageNum}, pageSize=100)}">100</a></li>
+	    	<li><a th:href="@{${'/students'}(page=0, size=1)}">1</a></li>
+	    	<li><a th:href="@{${'/students'}(page=0, size=10)}">10</a></li>
+	    	<li><a th:href="@{${'/students'}(page=0, size=50)}">50</a></li>
+	    	<li><a th:href="@{${'/students'}(page=0, size=100)}">100</a></li>
 	  </ul>
 	</div>
 </div>
@@ -85,7 +85,7 @@
 <div>
  	<ul class="pagination">
   		<li th:each="page: ${pages}" th:class="${page} == ${pageNum} ? 'active': ''">
-  			<a th:href="@{${'/students'}(pageNum=${page}, pageSize=${pageSize})}" th:text="${page} + 1"></a>
+  			<a th:href="@{${'/students'}(page=${page}, size=${pageSize})}" th:text="${page} + 1"></a>
   		</li>
 	</ul>
 </div>
@@ -283,6 +283,14 @@ function deleteStudent(){
 	})
 }
 
+function isEmpty(val) {
+	var str = val
+	if (str.replace(/(^\s*)|(\s*$)/g, "").length ==0) {
+		return true
+	}
+	return false
+}
+
 function searchStudent() {
 	var name = $("#search_name").val()
 	var age = $("#search_age").val()
@@ -294,8 +302,30 @@ function searchStudent() {
 	
 	if (validCheckStudent(name, age, sex, birthday, parent, phone, address)) {
 		console.log("search student:" + name)
+		
 		/*<![CDATA[*/
-		url = "students?name=" + name + "&pageNum=0&pageSize=" + 1
+		url = 'students?page=0&pageSize=0'
+		if (!isEmpty(name)) {
+			url = url + "&name=" + name
+		}
+		if (!isEmpty(age)) {
+			url = url + "&age=" + age
+		}
+		if (!isEmpty(sex)) {
+			url = url + "&sex=" + sex
+		}
+		if (!isEmpty(birthday)) {
+			url = url + "&birthday=" + birthday
+		}
+		if (!isEmpty(parent)) {
+			url = url + "&parent=" + parent
+		}
+		if (!isEmpty(phone)) {
+			url = url + "&phone=" + phone
+		}
+		if (!isEmpty(address)) {
+			url = url + "&address=" + address
+		}
 		/*]]>*/
 		location.href = url
 		

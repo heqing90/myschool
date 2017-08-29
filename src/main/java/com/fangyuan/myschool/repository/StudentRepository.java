@@ -23,8 +23,8 @@ public interface StudentRepository extends PagingAndSortingRepository<Student, I
 	
 	Page<Student> findAll(Pageable pageable);
 
-	@Query(value = "select u from Student u where u.name like %?1", 
-		countQuery = "select count(*) from Student u where u.name like %?1",
+	@Query(value = "select u from Student u where u.name like CONCAT(?1, '%')", 
+		countQuery = "select count(*) from Student u where u.name like CONCAT(?1, '%')",
 		nativeQuery = false)
 	Page<Student> findByText(String text, Pageable pageable);
 }

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,34 +30,39 @@ public class StudentContoller {
 	@Autowired
 	private StudentRepository studentRepository;
 	
-	@RequestMapping("")
+	@RequestMapping(value = "", method=RequestMethod.GET)
 	public String getAll(
 			ModelMap map,
 			@RequestParam(required = false) String name,
 			@RequestParam(required = false) String sex,
 			@RequestParam(required = false) Integer age,
 			@RequestParam(required = false) Date birthday,
-			@RequestParam(required = false) String phoneNumber,
+			@RequestParam(required = false) String phone,
 			@RequestParam(required = false) String address,
-			@RequestParam(required = false) String parentName,
-			@RequestParam(defaultValue = "0") Integer pageNum, 
-			@RequestParam(defaultValue = "${student.page.size}") Integer pageSize) {
-		int page = pageNum;
-		int size = pageSize;
+			@RequestParam(required = false) String parent,
+			@PageableDefault Pageable pageable) {
 		
 		Page<Student> students;
-		Pageable pageable = (Pageable) new PageRequest(page, size);
-		if (name == null && sex == null && age == null) {
+		if (name == null && sex == null && age == null && birthday == null && phone == null && address == null && parent == null) {
 			students = studentRepository.findAll(pageable);
 		} else {
-			log.info("get students: " + name);
-			students = studentRepository.findByText(name, pageable);
+			StringBuilder sbBuilder = new StringBuilder();
+			sbBuilder.append(name);
+//			sbBuilder.append(" ");
+//			sbBuilder.append(sex);
+//			sbBuilder.append(age);
+//			sbBuilder.append(birthday);
+//			sbBuilder.append(phone);
+//			sbBuilder.append(address);
+//			sbBuilder.append(parent);
+			log.info("find student: " + sbBuilder.toString());
+			students = studentRepository.findByText(sbBuilder.toString(), pageable);
 		}
 		map.addAttribute("students", students.getContent());
 		int[] pages = MyUtil.range(0, students.getTotalPages(), 1); 
 		map.addAttribute("pages", pages);
-		map.addAttribute("pageNum", pageNum);
-		map.addAttribute("pageSize", pageSize);
+		map.addAttribute("pageNum", pageable.getPageNumber());
+		map.addAttribute("pageSize", pageable.getPageSize());
 		return "students";
 	}
 	
