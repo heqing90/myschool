@@ -3,400 +3,460 @@
 <head>
 <meta charset="UTF-8"></meta>
 <title>所有学生信息</title>
-<link rel="stylesheet" type="text/css" th:href="@{webjars/bootstrap/3.3.7/css/bootstrap.min.css}" />
+<link rel="stylesheet" type="text/css"
+	th:href="@{webjars/bootstrap/3.3.7/css/bootstrap.min.css}" />
 <script th:src="@{/webjars/jquery/1.11.1/jquery.min.js}"></script>
 <script th:src="@{webjars/bootstrap/3.3.7/js/bootstrap.min.js}"></script>
-<script src="js/bootstrap-confirmation.js"></script>	
+<script src="js/bootstrap-confirmation.js"></script>
 </head>
 <body>
-<div class="container">
-<h1>杰兴方园幼儿园</h1>
-<div>
-	<div>
-		<button id= "add" type="button" class="btn btn-success" onclick="addStudent()">新增学生</button>
-	</div>
-	<div class="dropdown">
-		<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">每页显示条数<span class="caret"></span></button>
-	  	<ul class="dropdown-menu">
-	    	<li><a th:href="@{${'/students'}(page=0, size=1)}">1</a></li>
-	    	<li><a th:href="@{${'/students'}(page=0, size=10)}">10</a></li>
-	    	<li><a th:href="@{${'/students'}(page=0, size=50)}">50</a></li>
-	    	<li><a th:href="@{${'/students'}(page=0, size=100)}">100</a></li>
-	  </ul>
-	</div>
-</div>
-
-<div class="table-responsive">
-<table class="table table-striped table-hover table-bordered">
-	<colgroup>
-	<col style="width: 10%;"></col>
-	<col style="width: 5%;"></col>
-	<col style="width: 5%;"></col>
-	<col></col>
-	<col></col>
-	<col></col>
-	<col style="width: 10%;"></col>
-	<col style="width: 20%;"></col>
-	</colgroup>
-	<thead>
-	<tr>
-		<th>姓名</th>
-		<th>性别</th>
-		<th>年龄</th>
-		<th>出生日期</th>
-		<th>联系电话</th>
-		<th>联系地址</th>
-		<th>父母</th>
-		<th></th>
-	</tr>
-	</thead>
-	<tbody>
-	<tr>
-		<td><input type="text" class="form-control" id="search_name"></input></td>
-		<td><input type="text" class="form-control" id="search_sex"></input></td>
-		<td><input type="text" class="form-control" id="search_age"></input></td>
-		<td><input type="text" class="form-control" id="search_birthday"></input></td>
-		<td><input type="text" class="form-control" id="search_phone"></input></td>
-		<td><input type="text" class="form-control" id="search_address"></input></td>
-		<td><input type="text" class="form-control" id="search_parent"></input></td>
-		<td><button type="button" class="btn btn-primary" onclick="searchStudent()">查询</button></td>
-	</tr>
-	<tr th:each="student : ${students}">
-		<td th:text="${student.name}"></td>
-		<td th:text="${student.sex}"></td>
-		<td th:text="${student.age}"></td>
-		<td th:text="${student.birthday}"></td>
-		<td th:text="${student.phoneNumber}"></td>
-		<td th:text="${student.address}"></td>
-		<td th:text="${student.parentName}"></td>
-		<td>
+	<div class="container">
+		<h1>杰兴方园幼儿园</h1>
+		<div class="btn-group">
+			<button id="add" type="button" class="btn btn-success"
+				onclick="addStudent()">新增学生</button>
 			<div class="btn-group">
-  			<button type="button" class="btn btn-primary" th:onclick="'javascript:showStudent(' + ${student.id} + ')'">查看</button>
-  			<button type="button" class="btn btn-primary" th:onclick="'javascript:modifyStudent(' + ${student.id} + ')'">修改</button>
-  			<button type="button" class="btn btn-danger" data-toggle="confirmation" data-title="确认删除？" data-placement="left" data-btn-ok-label="确认" 
-  			data-btn-cancel-label="取消" th:id="${student.id}" data-on-confirm="deleteStudent">删除</button>
+				<button class="btn btn-primary dropdown-toggle" type="button"
+					data-toggle="dropdown">
+					每页显示条数<span class="caret"></span>
+				</button>
+				<ul class="dropdown-menu">
+					<li><a th:href="@{${'/students'}(page=0, size=1)}">1</a></li>
+					<li><a th:href="@{${'/students'}(page=0, size=10)}">10</a></li>
+					<li><a th:href="@{${'/students'}(page=0, size=50)}">50</a></li>
+					<li><a th:href="@{${'/students'}(page=0, size=100)}">100</a></li>
+				</ul>
 			</div>
-		</td>
-	</tr>
-	</tbody>
-	
-</table>
-</div>
-<div>
- 	<ul class="pagination">
-  		<li th:each="page: ${pages}" th:class="${page} == ${pageNum} ? 'active': ''">
-  			<a th:href="@{${'/students'}(page=${page}, size=${pageSize})}" th:text="${page} + 1"></a>
-  		</li>
-	</ul>
-</div>
+		</div>
 
-  <!-- Modal -->
-  <div class="modal fade" id="studentModal" role="dialog">
-    <div class="modal-dialog">
-    
-      <!-- Modal content-->
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title" id="detailTitle">添加学生</h4>
-        </div>
-        <div class="modal-body">
-          <form class="form-horizontal">
-		  <div class="form-group">
-		    <label class="col-sm-2">姓名</label>
-		    <div class="col-sm-10">
-		    <input type="text" class="form-control" id="modal_name"></input>
-		    </div>
-		  </div>
-		  <div class="form-group">
-		    <label class="col-sm-2">性别</label>
-		    <div class="col-sm-10">
-		    <input type="text" class="form-control" id="modal_sex"></input>
-		    </div>
-		  </div>
-		  <div class="form-group">
-		    <label class="col-sm-2">年龄</label>
-		    <div class="col-sm-10">
-		    <input type="text" class="form-control" id="modal_age"></input>
-		    </div>
-		  </div>
-		  <div class="form-group">
-		    <label class="col-sm-2">出生日期</label>
-		    <div class="col-sm-10">
-		    <input type="text" class="form-control" id="modal_birthday"></input>
-		    </div>
-		  </div>
-		  <div class="form-group">
-		    <label class="col-sm-2">联系电话</label>
-		    <div class="col-sm-10">
-		    <input type="text" class="form-control" id="modal_phone"></input>
-		    </div>
-		  </div>
-		  <div class="form-group">
-		    <label class="col-sm-2">联系地址</label>
-		    <div class="col-sm-10">
-		    <input type="text" class="form-control" id="modal_address"></input>
-		    </div>
-		  </div>
-		  <div class="form-group">
-		    <label class="col-sm-2">父母</label>
-		    <div class="col-sm-10">
-		    <input type="text" class="form-control" id="modal_parent"></input>
-		    </div>
-		  </div>
-		</form>
-        </div>
-        <div class="modal-footer">
-         	<button type="button" class="btn btn-primary" id="saveStudent">保存</button>
-          	<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-        </div>
-      </div>
-      
-    </div>
-  </div>
+		<div class="table-responsive">
+			<table class="table table-striped table-hover table-bordered">
+				<colgroup>
+					<col style="width: 10%;"></col>
+					<col style="width: 7%;"></col>
+					<col style="width: 6%;"></col>
+					<col style="width: 8%;"></col>
+					<col></col>
+					<col></col>
+					<col></col>
+					<col style="width: 10%;"></col>
+					<col style="width: 16%;"></col>
+				</colgroup>
+				<thead>
+					<tr>
+						<th>姓名</th>
+						<th>性别</th>
+						<th>年龄</th>
+						<th>班级</th>
+						<th>出生日期</th>
+						<th>联系电话</th>
+						<th>联系地址</th>
+						<th>父母</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td><input type="text" class="form-control" id="search_name"></input></td>
+						<td><select class="selectpicker form-control" id="search_sex">
+								<option></option>
+								<option>男</option>
+								<option>女</option>
+						</select></td>
+						<td><input type="text" class="form-control" id="search_age"></input></td>
+						<td><select class="selectpicker form-control" id="search_grade">
+								<option></option>
+								<option>大班</option>
+								<option>中班</option>
+								<option>小班</option>
+								<option>托班</option>
+						</select></td>
+						<td><input type="text" class="form-control" id="search_birthday"></input></td>
+						<td><input type="text" class="form-control" id="search_phone"></input></td>
+						<td><input type="text" class="form-control"
+							id="search_address"></input></td>
+						<td><input type="text" class="form-control"
+							id="search_parent"></input></td>
+						<td><button type="button" class="btn btn-primary"
+								onclick="searchStudent()">查询</button></td>
+					</tr>
+					<tr th:each="student : ${students}">
+						<td th:text="${student.name}"></td>
+						<td th:text="${student.sex}"></td>
+						<td th:text="${student.age}"></td>
+						<td th:text="${student.grade}"></td>
+						<td th:text="${student.birthday}"></td>
+						<td th:text="${student.phoneNumber}"></td>
+						<td th:text="${student.address}"></td>
+						<td th:text="${student.parentName}"></td>
+						<td>
+							<div class="btn-group">
+								<button type="button" class="btn btn-primary"
+									th:onclick="'javascript:showStudent(' + ${student.id} + ')'">查看</button>
+								<button type="button" class="btn btn-primary"
+									th:onclick="'javascript:modifyStudent(' + ${student.id} + ')'">修改</button>
+								<button type="button" class="btn btn-danger"
+									data-toggle="confirmation" data-title="确认删除？"
+									data-placement="left" data-btn-ok-label="确认"
+									data-btn-cancel-label="取消" th:id="${student.id}"
+									data-on-confirm="deleteStudent">删除</button>
+							</div>
+						</td>
+					</tr>
+				</tbody>
 
-</div>
-	
-<script>
+			</table>
+		</div>
+		<div>
+			<ul class="pagination">
+				<li th:each="page: ${pages}"
+					th:class="${page} == ${pageNum} ? 'active': ''"><a
+					th:href="@{${'/students'}(page=${page}, size=${pageSize})}"
+					th:text="${page} + 1"></a></li>
+			</ul>
+		</div>
 
-$('[data-toggle=confirmation]').confirmation({
-	  rootSelector: '[data-toggle=confirmation]',
-	  // other options
-	});
+		<!-- Modal -->
+		<div class="modal fade" id="studentModal" role="dialog">
+			<div class="modal-dialog">
 
-//$("td,th").addClass("text-center");  
+				<!-- Modal content-->
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"
+							aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+						<h4 class="modal-title" id="detailTitle">添加学生</h4>
+					</div>
+					<div class="modal-body">
+						<form class="form-horizontal">
+							<div class="form-group">
+								<label class="col-sm-2">姓名</label>
+								<div class="col-sm-10">
+									<input type="text" class="form-control" id="modal_name"></input>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2">性别</label>
+								<div class="col-sm-10">
+									<select class="selectpicker form-control" id="modal_sex">
+										<option>男</option>
+										<option>女</option>
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2">年龄</label>
+								<div class="col-sm-10">
+									<input type="text" class="form-control" id="modal_age"></input>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2">班级</label>
+								<div class="col-sm-10">
+									<select class="selectpicker form-control" id="modal_grade">
+										<option>大班</option>
+										<option>中班</option>
+										<option>小班</option>
+										<option>托班</option>
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2">出生日期</label>
+								<div class="col-sm-10">
+									<input type="text" class="form-control" id="modal_birthday"></input>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2">联系电话</label>
+								<div class="col-sm-10">
+									<input type="text" class="form-control" id="modal_phone"></input>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2">联系地址</label>
+								<div class="col-sm-10">
+									<input type="text" class="form-control" id="modal_address"></input>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2">父母</label>
+								<div class="col-sm-10">
+									<input type="text" class="form-control" id="modal_parent"></input>
+								</div>
+							</div>
+						</form>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary" id="saveStudent">保存</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+					</div>
+				</div>
 
+			</div>
+		</div>
 
-function validCheckStudent(name, age, sex, birthday, parent, phone, address) {
-	return true	
-}
+	</div>
 
-
-function addStudent(){
-	console.log("add a student.")
-	$("#detailTitle").text("添加学生")
-	task = "add"
-	studentId = -1
-   	$("#studentModal").modal({
-        keyboard : true,
-        show : true,
-        backdrop : "static"
-    });
-}
-
-function showStudent(id){
-	console.log("show: "+ id)
-	studentId = id
-	
-	$.ajax({
-		url: "students/detail?id=" + id ,
-		cache: false,
-		type: "get",
-	   	beforeSend: function () {
-            $(this).attr({ disabled: "disabled"});
-        },
-		success: function(result){
-			console.log("success: " + result.id)
-			$("#saveStudent").hide()
-			$('#detailTitle').text("学生信息")
-			
-			$("#modal_name").val(result.name)
-			$("#modal_age").val(result.age)		
-			$("#modal_birthday").val(result.birthday)
-			$("#modal_sex").val(result.sex)
-			$("#modal_parent").val(result.parentName)
-			$("#modal_phone").val(result.phoneNumber)
-			$("#modal_address").val(result.address)
-	       	$("#studentModal").modal({
-                keyboard : true,
-                show : true,
-                backdrop : "static"
-            });
-		},
-		complete: function () {
-	    	$(this).removeAttr("disabled");
-	  	},
-	  	error: function (data) {
-	    	console.log("error: " + data.responseText);
-	    }
-	})
-}
-
-function modifyStudent(id){
-	console.log("modify: "+ id)
-	studentId = id
-	$.ajax({
-		url: "students/detail?id=" + id ,
-		cache: false,
-		type: "get",
-	   	beforeSend: function () {
-            $(this).attr({ disabled: "disabled"});
-        },
-		success: function(result){
-			console.log("success: " + result.id)
-			task = "modify";
-			$("#detailTitle").text("修改学生信息")
-			$("#modal_name").val(result.name)
-			$("#modal_age").val(result.age)		
-			$("#modal_birthday").val(result.birthday)
-			$("#modal_sex").val(result.sex)
-			$("#modal_parent").val(result.parentName)
-			$("#modal_phone").val(result.phoneNumber)
-			$("#modal_address").val(result.address)
-	       	$("#studentModal").modal({
-                keyboard : true,
-                show : true,
-                backdrop : "static"
-            });
-		},
-		complete: function () {
-	    	$(this).removeAttr("disabled");
-	  	},
-	  	error: function (data) {
-	    	console.log("error: " + data.responseText);
-	    }
-	})
-}
-
-function deleteStudent(){
-	
-	var id = $(this)[0].getAttribute('id')
-	console.log("delete: "+ id)
-	studentId = id
-	$.ajax({
-		url: "students/delete?id=" + id,
-		cache: false,
-		type: "get",
-	   	beforeSend: function () {
-            $(this).attr({ disabled: "disabled"});
-        },
-		success: function(result){
-			console.log("success: " + result)
-		},
-		complete: function () {
-	    	$(this).removeAttr("disabled");
-	    	location.reload();
-	  	},
-	  	error: function (data) {
-	    	console.log("error: " + data.responseText);
-	    }
-	})
-}
-
-function isEmpty(val) {
-	var str = val
-	if (str.replace(/(^\s*)|(\s*$)/g, "").length ==0) {
-		return true
-	}
-	return false
-}
-
-function searchStudent() {
-	var name = $("#search_name").val()
-	var age = $("#search_age").val()
-	var sex = $("#search_sex").val()
-	var birthday = $("#search_birthday").val()
-	var parent = $("#search_parent").val()
-	var phone = $("#search_phone").val()
-	var address = $("#search_address").val()
-	
-	if (validCheckStudent(name, age, sex, birthday, parent, phone, address)) {
-		console.log("search student:" + name)
-		
-		/*<![CDATA[*/
-		url = 'students?page=0&pageSize=0'
-		if (!isEmpty(name)) {
-			url = url + "&name=" + name
-		}
-		if (!isEmpty(age)) {
-			url = url + "&age=" + age
-		}
-		if (!isEmpty(sex)) {
-			url = url + "&sex=" + sex
-		}
-		if (!isEmpty(birthday)) {
-			url = url + "&birthday=" + birthday
-		}
-		if (!isEmpty(parent)) {
-			url = url + "&parent=" + parent
-		}
-		if (!isEmpty(phone)) {
-			url = url + "&phone=" + phone
-		}
-		if (!isEmpty(address)) {
-			url = url + "&address=" + address
-		}
-		/*]]>*/
-		location.href = url
-		
-	} else {
-		console.log('invalid input.')
-	}
-}
-
-$(document).ready(function(){
-	$("#saveStudent").click(function(){
-		console.log("save student info.")
-		var name = $("#modal_name").val()
-		var age = $("#modal_age").val()
-		var sex = $("#modal_sex").val()
-		var birthday = $("#modal_birthday").val()
-		var parent = $("#modal_parent").val()
-		var phone = $("#modal_phone").val()
-		var address = $("#modal_address").val()
-		var json =  {
-				"name": name,
-				"age": age,
-				"sex": sex,
-				"birthday": birthday,
-				"parentName":  parent,
-				"phoneNumber": phone,
-				"address": address,
-			}
-		if (studentId != -1){
-			json['id'] = studentId
-		}
-		$.ajax({
-			url: "students/" + task,
-			cache: false,
-			contentType: "application/json; charset=utf-8",
-			dataType: 'json',
-			data: JSON.stringify(json),
-			type: "post",
-		   	beforeSend: function () {
-	            $('#saveStudent').attr({ disabled: "disabled"});
-	        },
-			success: function(result){
-				console.log("success: " + result)
-				$('#studentModal').modal('toggle');
-			},
-			complete: function () {
-		    	$('#saveStudent').removeAttr("disabled");
-		  	},
-		  	error: function (data) {
-		    	console.log("error: " + data.responseText);
-		    }
+	<script>
+		$('[data-toggle=confirmation]').confirmation({
+			rootSelector : '[data-toggle=confirmation]',
+		// other options
 		});
-	});
-	
-	$("#studentModal").on("hidden.bs.modal", function() {
-		console.log("clear data.")
-	   	$(':input', "div.form-group").each(function () {
-	        var type = this.type;
-	        var tag = this.tagName.toLowerCase(); // normalize case
-	        if (type == 'text' || type == 'password' || tag == 'textarea')
-	            this.value = "";
-	            // 多选checkboxes清空
-	            // select 下拉框清空
-	        else if (tag == 'select')
-	            this.selectedIndex = -1;
-	    });
-		$("#saveStudent").hide()
-		location.reload();
-	});
-});
 
-</script>
+		//$("td,th").addClass("text-center");  
+
+		function validCheckStudent(name, age, sex, birthday, parent, phone,
+				address) {
+			return true
+		}
+
+		function addStudent() {
+			console.log("add a student.")
+			$("#detailTitle").text("添加学生")
+			task = "add"
+			studentId = -1
+			$("#studentModal").modal({
+				keyboard : true,
+				show : true,
+				backdrop : "static"
+			});
+		}
+
+		function showStudent(id) {
+			console.log("show: " + id)
+			studentId = id
+
+			$.ajax({
+				url : "students/detail?id=" + id,
+				cache : false,
+				type : "get",
+				beforeSend : function() {
+					$(this).attr({
+						disabled : "disabled"
+					});
+				},
+				success : function(result) {
+					console.log("success: " + result.id)
+					$("#saveStudent").hide()
+					$('#detailTitle').text("学生信息")
+
+					$("#modal_name").val(result.name)
+					$("#modal_age").val(result.age)
+					$("#modal_grade").val(result.grade)
+					$("#modal_birthday").val(result.birthday)
+					$("#modal_sex").val(result.sex)
+					$("#modal_parent").val(result.parentName)
+					$("#modal_phone").val(result.phoneNumber)
+					$("#modal_address").val(result.address)
+					$("#studentModal").modal({
+						keyboard : true,
+						show : true,
+						backdrop : "static"
+					});
+				},
+				complete : function() {
+					$(this).removeAttr("disabled");
+				},
+				error : function(data) {
+					console.log("error: " + data.responseText);
+				}
+			})
+		}
+
+		function modifyStudent(id) {
+			console.log("modify: " + id)
+			studentId = id
+			$.ajax({
+				url : "students/detail?id=" + id,
+				cache : false,
+				type : "get",
+				beforeSend : function() {
+					$(this).attr({
+						disabled : "disabled"
+					});
+				},
+				success : function(result) {
+					console.log("success: " + result.id)
+					task = "modify";
+					$("#detailTitle").text("修改学生信息")
+					$("#modal_name").val(result.name)
+					$("#modal_age").val(result.age)
+					$("#modal_grade").val(result.grade)
+					$("#modal_birthday").val(result.birthday)
+					$("#modal_sex").val(result.sex)
+					$("#modal_parent").val(result.parentName)
+					$("#modal_phone").val(result.phoneNumber)
+					$("#modal_address").val(result.address)
+					$("#studentModal").modal({
+						keyboard : true,
+						show : true,
+						backdrop : "static"
+					});
+				},
+				complete : function() {
+					$(this).removeAttr("disabled");
+				},
+				error : function(data) {
+					console.log("error: " + data.responseText);
+				}
+			})
+		}
+
+		function deleteStudent() {
+
+			var id = $(this)[0].getAttribute('id')
+			console.log("delete: " + id)
+			studentId = id
+			$.ajax({
+				url : "students/delete?id=" + id,
+				cache : false,
+				type : "get",
+				beforeSend : function() {
+					$(this).attr({
+						disabled : "disabled"
+					});
+				},
+				success : function(result) {
+					console.log("success: " + result)
+				},
+				complete : function() {
+					$(this).removeAttr("disabled");
+					location.reload();
+				},
+				error : function(data) {
+					console.log("error: " + data.responseText);
+				}
+			})
+		}
+
+		function isEmpty(val) {
+			var str = val
+			if (str.replace(/(^\s*)|(\s*$)/g, "").length == 0) {
+				return true
+			}
+			return false
+		}
+
+		function searchStudent() {
+			var name = $("#search_name").val()
+			var age = $("#search_age").val()
+			var sex = $("#search_sex").val()
+			var grade = $("#search_grade").val()
+			var birthday = $("#search_birthday").val()
+			var parent = $("#search_parent").val()
+			var phone = $("#search_phone").val()
+			var address = $("#search_address").val()
+
+			if (validCheckStudent(name, age, sex, birthday, parent, phone,
+					address)) {
+				console.log("search student:" + sex)
+
+				/*<![CDATA[*/
+				url = 'students?page=0&pageSize=0'
+				if (!isEmpty(name)) {
+					url = url + "&name=" + name
+				}
+				if (!isEmpty(age)) {
+					url = url + "&age=" + age
+				}
+				if (!isEmpty(sex)) {
+					url = url + "&sex=" + sex
+				}
+				if (!isEmpty(birthday)) {
+					url = url + "&birthday=" + birthday
+				}
+				if (!isEmpty(parent)) {
+					url = url + "&parent=" + parent
+				}
+				if (!isEmpty(phone)) {
+					url = url + "&phone=" + phone
+				}
+				if (!isEmpty(address)) {
+					url = url + "&address=" + address
+				}
+				/*]]>*/
+				location.href = url
+
+			} else {
+				console.log('invalid input.')
+			}
+		}
+
+		$(document).ready(
+				function() {
+					$("#saveStudent").click(function() {
+						console.log("save student info.")
+						var name = $("#modal_name").val()
+						var age = $("#modal_age").val()
+						var sex = $("#modal_sex").val()
+						var grade = $("model_grade").val()
+						var birthday = $("#modal_birthday").val()
+						var parent = $("#modal_parent").val()
+						var phone = $("#modal_phone").val()
+						var address = $("#modal_address").val()
+						var json = {
+							"name" : name,
+							"age" : age,
+							"sex" : sex,
+							"birthday" : birthday,
+							"parentName" : parent,
+							"phoneNumber" : phone,
+							"address" : address,
+						}
+						if (studentId != -1) {
+							json['id'] = studentId
+						}
+						$.ajax({
+							url : "students/" + task,
+							cache : false,
+							contentType : "application/json; charset=utf-8",
+							dataType : 'json',
+							data : JSON.stringify(json),
+							type : "post",
+							beforeSend : function() {
+								$('#saveStudent').attr({
+									disabled : "disabled"
+								});
+							},
+							success : function(result) {
+								console.log("success: " + result)
+								$('#studentModal').modal('toggle');
+							},
+							complete : function() {
+								$('#saveStudent').removeAttr("disabled");
+							},
+							error : function(data) {
+								console.log("error: " + data.responseText);
+							}
+						});
+					});
+
+					$("#studentModal").on(
+							"hidden.bs.modal",
+							function() {
+								console.log("clear data.")
+								$(':input', "div.form-group").each(
+										function() {
+											var type = this.type;
+											var tag = this.tagName
+													.toLowerCase(); // normalize case
+											if (type == 'text'
+													|| type == 'password'
+													|| tag == 'textarea')
+												this.value = "";
+											// 多选checkboxes清空
+											// select 下拉框清空
+											else if (tag == 'select')
+												this.selectedIndex = -1;
+										});
+								$("#saveStudent").hide()
+								location.reload();
+							});
+				});
+	</script>
 
 </body>
 </html>

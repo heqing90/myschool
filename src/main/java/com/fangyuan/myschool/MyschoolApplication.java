@@ -25,9 +25,9 @@ public class MyschoolApplication {
         return (args) -> {
             log.info("create default students");
             repository.deleteAll();
-            repository.save(new Student("张三", 5, "男", new Date(), "122343545", "杰兴", "张大"));
-            repository.save(new Student("张四", 5, "男", new Date(), "122343545", "杰兴", "张大"));
-            repository.save(new Student("张五", 5, "男", new Date(), "122343545", "杰兴", "张大"));
+            repository.save(new Student("张三", 5, "男", "大班", new Date(), "122343545", "杰兴", "张大"));
+            repository.save(new Student("张四", 5, "男", "大班", new Date(), "122343546", "杰兴", "张大"));
+            repository.save(new Student("张五", 5, "男", "大班", new Date(), "122343547", "杰兴", "张大"));
             log.info("intialize students info success.");
         };
     }

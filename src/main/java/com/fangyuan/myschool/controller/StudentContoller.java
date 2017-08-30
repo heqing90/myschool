@@ -2,12 +2,10 @@ package com.fangyuan.myschool.controller;
 
 import lombok.extern.slf4j.Slf4j;
 
-import java.sql.Date;
+import java.util.Date;
 
-import org.aspectj.weaver.loadtime.Agent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
@@ -20,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fangyuan.myschool.domain.Student;
 import com.fangyuan.myschool.repository.StudentRepository;
+import com.fangyuan.myschool.specification.SimpleSpecificationBuilder;
 import com.fangyuan.myschool.utils.MyUtil;
 
 
@@ -46,17 +45,16 @@ public class StudentContoller {
 		if (name == null && sex == null && age == null && birthday == null && phone == null && address == null && parent == null) {
 			students = studentRepository.findAll(pageable);
 		} else {
-			StringBuilder sbBuilder = new StringBuilder();
-			sbBuilder.append(name);
-//			sbBuilder.append(" ");
-//			sbBuilder.append(sex);
-//			sbBuilder.append(age);
-//			sbBuilder.append(birthday);
-//			sbBuilder.append(phone);
-//			sbBuilder.append(address);
-//			sbBuilder.append(parent);
-			log.info("find student: " + sbBuilder.toString());
-			students = studentRepository.findByText(sbBuilder.toString(), pageable);
+			students = studentRepository.findAll(
+					new SimpleSpecificationBuilder<Student>("name", ":", name)
+					.add("sex", "=", sex)
+					.add("age", "=", age)
+					.add("birthday", "=", birthday)
+					.add("phoneNumber", ":", phone)
+					.add("address", ":", address)
+					.add("parentName", ":", parent)
+					.generateSpecification(), 
+					pageable);
 		}
 		map.addAttribute("students", students.getContent());
 		int[] pages = MyUtil.range(0, students.getTotalPages(), 1); 
