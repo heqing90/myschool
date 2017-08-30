@@ -2,6 +2,8 @@ package com.fangyuan.myschool.controller;
 
 import lombok.extern.slf4j.Slf4j;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +37,7 @@ public class StudentContoller {
 			@RequestParam(required = false) String name,
 			@RequestParam(required = false) String sex,
 			@RequestParam(required = false) Integer age,
-			@RequestParam(required = false) Date birthday,
+			@RequestParam(required = false) String birthday,
 			@RequestParam(required = false) String phone,
 			@RequestParam(required = false) String address,
 			@RequestParam(required = false) String parent,
@@ -45,11 +47,21 @@ public class StudentContoller {
 		if (name == null && sex == null && age == null && birthday == null && phone == null && address == null && parent == null) {
 			students = studentRepository.findAll(pageable);
 		} else {
+			Date birdayDate = null;
+			if (birthday != null) {
+				SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+				try {
+					birdayDate = simpleDateFormat.parse(birthday);
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 			students = studentRepository.findAll(
 					new SimpleSpecificationBuilder<Student>("name", ":", name)
 					.add("sex", "=", sex)
 					.add("age", "=", age)
-					.add("birthday", "=", birthday)
+					.add("birthday", "=", birdayDate)
 					.add("phoneNumber", ":", phone)
 					.add("address", ":", address)
 					.add("parentName", ":", parent)
