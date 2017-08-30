@@ -37,6 +37,7 @@ public class StudentContoller {
 			@RequestParam(required = false) String name,
 			@RequestParam(required = false) String sex,
 			@RequestParam(required = false) Integer age,
+			@RequestParam(required = false) String grade,
 			@RequestParam(required = false) String birthday,
 			@RequestParam(required = false) String phone,
 			@RequestParam(required = false) String address,
@@ -44,7 +45,7 @@ public class StudentContoller {
 			@PageableDefault Pageable pageable) {
 		
 		Page<Student> students;
-		if (name == null && sex == null && age == null && birthday == null && phone == null && address == null && parent == null) {
+		if (name == null && sex == null && age == null && grade == null && birthday == null && phone == null && address == null && parent == null) {
 			students = studentRepository.findAll(pageable);
 		} else {
 			Date birdayDate = null;
@@ -61,6 +62,7 @@ public class StudentContoller {
 					new SimpleSpecificationBuilder<Student>("name", ":", name)
 					.add("sex", "=", sex)
 					.add("age", "=", age)
+					.add("grade", "=", grade)
 					.add("birthday", "=", birdayDate)
 					.add("phoneNumber", ":", phone)
 					.add("address", ":", address)

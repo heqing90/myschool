@@ -35,7 +35,7 @@
 					<col style="width: 10%;"></col>
 					<col style="width: 7%;"></col>
 					<col style="width: 6%;"></col>
-					<col style="width: 8%;"></col>
+					<col style="width: 9%;"></col>
 					<col></col>
 					<col></col>
 					<col></col>
@@ -355,7 +355,7 @@
 				console.log("search student:" + sex)
 
 				/*<![CDATA[*/
-				url = 'students?page=0&pageSize=0'
+				url = 'students?page=0'
 				if (!isEmpty(name)) {
 					url = url + "&name=" + name
 				}
@@ -364,6 +364,9 @@
 				}
 				if (!isEmpty(sex)) {
 					url = url + "&sex=" + sex
+				}
+				if (!isEmpty(grade)) {
+					url = url + "&grade=" + grade
 				}
 				if (!isEmpty(birthday)) {
 					url = url + "&birthday=" + birthday
@@ -392,7 +395,7 @@
 						var name = $("#modal_name").val()
 						var age = $("#modal_age").val()
 						var sex = $("#modal_sex").val()
-						var grade = $("model_grade").val()
+						var grade = $("#modal_grade").val()
 						var birthday = $("#modal_birthday").val()
 						var parent = $("#modal_parent").val()
 						var phone = $("#modal_phone").val()
@@ -401,11 +404,13 @@
 							"name" : name,
 							"age" : age,
 							"sex" : sex,
+							"grade" : grade,
 							"birthday" : birthday,
-							"parentName" : parent,
 							"phoneNumber" : phone,
 							"address" : address,
+							"parentName" : parent,
 						}
+						console.log()
 						if (studentId != -1) {
 							json['id'] = studentId
 						}
@@ -420,6 +425,7 @@
 								$('#saveStudent').attr({
 									disabled : "disabled"
 								});
+								console.log(JSON.stringify(json))
 							},
 							success : function(result) {
 								console.log("success: " + result)

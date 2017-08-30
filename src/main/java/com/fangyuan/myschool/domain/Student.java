@@ -61,18 +61,6 @@ public class Student implements Serializable{
 		
 	}
 	
-	public Student(Long id) {
-		this.id = id;
-		this.name = "";
-		this.age = 0;
-		this.birthday = new Date();
-		this.sex = "";
-		this.parentName = "";
-		this.phoneNumber = "";
-		this.address = "";
-		this.grade = "";
-	}
-	
 	public Student(String name, int age, String sex, String grade, Date birthday, String phoneNumber, String address, String parentName) {
 		this.name = name;
 		this.age = age;
