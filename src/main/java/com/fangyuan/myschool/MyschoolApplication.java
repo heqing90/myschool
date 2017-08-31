@@ -10,7 +10,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 import com.fangyuan.myschool.domain.Student;
+import com.fangyuan.myschool.domain.User;
 import com.fangyuan.myschool.repository.StudentRepository;
+import com.fangyuan.myschool.repository.UserRepository;
 
 
 @SpringBootApplication
@@ -32,6 +34,16 @@ public class MyschoolApplication {
             repository.save(new Student("张四", 5, "男", "大班", date, "122343546", "杰兴", "张大"));
             repository.save(new Student("张五", 5, "男", "大班", date, "122343547", "杰兴", "张大"));
             log.info("intialize students info success.");
+        };
+    }
+    
+    @Bean
+    public CommandLineRunner user(UserRepository repository) {
+        return (args) -> {
+            log.info("create default user");
+            repository.deleteAll();
+            repository.save(new User("root", "root"));
+            log.info("intialize user info success.");
         };
     }
 }

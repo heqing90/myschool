@@ -27,7 +27,7 @@ import com.fangyuan.myschool.utils.MyUtil;
 @Controller
 @Slf4j
 @RequestMapping("/students")
-public class StudentContoller {
+public class StudentController {
 	@Autowired
 	private StudentRepository studentRepository;
 	
