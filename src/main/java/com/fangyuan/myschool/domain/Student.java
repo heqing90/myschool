@@ -12,6 +12,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 
 @Entity
@@ -43,6 +45,7 @@ public class Student implements Serializable{
  	private String grade;
 	
 	@Column(nullable = false)
+	@Temporal(TemporalType.DATE)
     @NonNull
 	private Date birthday;
 	
