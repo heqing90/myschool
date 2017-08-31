@@ -3,23 +3,32 @@
 <head>
 <meta charset="UTF-8"></meta>
 <title>登陆</title>
+<link rel="stylesheet" type="text/css"
+	th:href="@{webjars/bootstrap/3.3.7/css/bootstrap.min.css}" />
+<link rel="stylesheet" type="text/css" th:href="@{css/common.css}" />
+<script th:src="@{/webjars/jquery/1.11.1/jquery.min.js}"></script>
+<script th:src="@{webjars/bootstrap/3.3.7/js/bootstrap.min.js}"></script>
 </head>
 <body>
-	<div>
-		<form th:action="@{/login}" method="post">
-			<div>
-				<label> User Name : <input type="text" name="username" />
-				</label>
+	<div class="container">
+		
+		<form th:action="@{/login}" method="post" class="form-signin">
+		<h2 class="form-heading">方园幼儿园</h2>
+			<div class="form-group">
+				<label for="username">账号:</label> <input type="text"
+					class="form-control" id="username" placeholder="输入账号"
+					name="username"></input>
 			</div>
-			<div>
-				<label> Password: <input type="password" name="password" />
-				</label>
+			<div class="form-group">
+				<label for="password">密码:</label> <input type="password"
+					class="form-control" id="password" placeholder="输入密码"
+					name="password"></input>
 			</div>
-			<div>
-				<input type="submit" value="Sign In" />
+			<div class="checkbox">
+				<label><input type="checkbox" name="remember"></input> 记住账号</label>
 			</div>
+			<button type="submit" class="btn btn-lg btn-primary btn-block">登陆</button>
 		</form>
-
 	</div>
 </body>
 </html>
