@@ -1,7 +1,5 @@
 package com.fangyuan.myschool.domain;
 
-import java.util.Date;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -17,14 +15,13 @@ public class User {
 	@Id
 	@GeneratedValue
 	private Long id;
-	
+
 	@NonNull
 	private String username;
-	
+
 	@NonNull
 	private String password;
-	
-	public User () {
-		
+
+	public User() {
 	}
 }

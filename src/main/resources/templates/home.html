@@ -1,11 +1,30 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8"></meta>
-<title>Insert title here</title>
+<title>方园幼儿园</title>
+<link rel="stylesheet" type="text/css"
+	th:href="@{webjars/bootstrap/3.3.7/css/bootstrap.min.css}" />
+<link rel="stylesheet" type="text/css" th:href="@{css/common.css}" />
+<script th:src="@{/webjars/jquery/1.11.1/jquery.min.js}"></script>
+<script th:src="@{webjars/bootstrap/3.3.7/js/bootstrap.min.js}"></script>
 </head>
 <body>
-<h1> HOME PAGE</h1>
-<p><a th:href="@{/students}">学生管理</a> </p>
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-6">
+				<div class="card " style="width: 20rem;">
+					<img class="card-img-top img-fluid"
+						th:src="@{image/students_card.jpg}" alt="Card image cap"></img>
+					<div class="card-block">
+						<h4 class="card-title">Card title</h4>
+						<p class="card-text">Some quick example text to build on the
+							card title and make up the bulk of the card's content.</p>
+						<a th:href="@{/students}" class="btn btn-primary">学生管理</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </body>
 </html>

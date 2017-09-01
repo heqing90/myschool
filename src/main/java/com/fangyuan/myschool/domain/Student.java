@@ -1,11 +1,6 @@
 package com.fangyuan.myschool.domain;
 
-import lombok.Data;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -15,56 +10,59 @@ import javax.persistence.Id;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import lombok.Data;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 @Entity
 @Data
 @RequiredArgsConstructor
-public class Student implements Serializable{
+public class Student implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
-	
+
 	@Id
 	@GeneratedValue
 	private Long id;
-	
+
 	@Column(nullable = false)
-    @NonNull
+	@NonNull
 	private String name;
-	
+
 	@Column(nullable = false)
 	private int age;
 
-    @NonNull
+	@NonNull
 	private String sex;
-    
-    @NonNull
- 	private String grade;
-	
+
+	@NonNull
+	private String grade;
+
 	@Column(nullable = false)
 	@Temporal(TemporalType.DATE)
-    @NonNull
+	@NonNull
 	private Date birthday;
-	
+
 	@Column(nullable = false)
-    @NonNull
+	@NonNull
 	private String parentName;
-	
+
 	@Column
-    @NonNull
+	@NonNull
 	private String phoneNumber;
-	
+
 	@Column
 	private String address;
 
 	public Student() {
-		
+
 	}
-	
-	public Student(String name, int age, String sex, String grade, Date birthday, String phoneNumber, String address, String parentName) {
+
+	public Student(String name, int age, String sex, String grade, Date birthday, String phoneNumber, String address,
+			String parentName) {
 		this.name = name;
 		this.age = age;
 		this.grade = grade;
@@ -74,7 +72,7 @@ public class Student implements Serializable{
 		this.phoneNumber = phoneNumber;
 		this.address = address;
 	}
-	
+
 	public Student update(Student student) {
 		this.name = student.name;
 		this.age = student.age;
@@ -85,10 +83,5 @@ public class Student implements Serializable{
 		this.phoneNumber = student.phoneNumber;
 		this.address = student.address;
 		return this;
-	}
-	
-	public String getBirthday() {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		return sdf.format(this.birthday).toString();
 	}
 }
