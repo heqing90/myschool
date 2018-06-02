@@ -1,50 +1,16 @@
 package com.fangyuan.myschool;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.CommandLineRunner;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
-
-import com.fangyuan.myschool.domain.Student;
-import com.fangyuan.myschool.domain.User;
-import com.fangyuan.myschool.repository.StudentRepository;
-import com.fangyuan.myschool.repository.UserRepository;
 
 
 @SpringBootApplication
-@Slf4j
+@MapperScan("com.fangyuan.myschool.mapper")
 public class MyschoolApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(MyschoolApplication.class, args);
-    }
-
-    @Bean
-    public CommandLineRunner students(StudentRepository repository) {
-        return (args) -> {
-            log.info("create default students");
-            repository.deleteAll();
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            Date date = simpleDateFormat.parse("2017-01-01");
-            repository.save(new Student("张三", 5, "男", "大班", date, "122343545", "杰兴", "张大"));
-            repository.save(new Student("张四", 5, "男", "大班", date, "122343546", "杰兴", "张大"));
-            repository.save(new Student("张五", 5, "男", "大班", date, "122343547", "杰兴", "张大"));
-            log.info("intialize students info success.");
-        };
-    }
-    
-    @Bean
-    public CommandLineRunner user(UserRepository repository) {
-        return (args) -> {
-            log.info("create default user");
-            repository.deleteAll();
-            repository.save(new User("root", "root"));
-            log.info("intialize user info success.");
-        };
     }
 }
 
